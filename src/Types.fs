@@ -8,4 +8,5 @@ type 'a Reply =
   | Ok of 'a
   | Created of Guid
   | NotFound of string
+  | Conflict of string
   | ServerError of exn
