@@ -19,18 +19,18 @@ let internal setupCmd () =
 
       create table if not exists items (
         id uuid primary key default gen_random_uuid(),
-        item_type uuid not null references item_types(id)
+        item_type uuid not null references item_types(id) on delete cascade
       );
 
       create table if not exists weapons (
-        item_id uuid not null references items(id),
+        item_id uuid not null references items(id) on delete cascade,
         name varchar(128) not null,
         description text not null,
         damage int not null
       );
 
       create table if not exists armors (
-        item_id uuid not null references items(id),
+        item_id uuid not null references items(id) on delete cascade,
         name varchar(128) not null,
         description text not null,
         damage int not null
