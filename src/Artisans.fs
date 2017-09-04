@@ -2,7 +2,7 @@ module Zrpg.Artisans
 
 open System
 open Zrpg.Zones
-open Zrpg.Blacksmithing
+open Zrpg.Blueprints
 
 type ArtisanType =
   | Blacksmith

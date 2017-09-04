@@ -1,4 +1,4 @@
-module Zrpg.Blacksmithing
+module Zrpg.Blueprints
 
 open System
 
