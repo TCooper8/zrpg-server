@@ -14,6 +14,7 @@
     <Compile Include="src/Types.fs" />
     <Compile Include="src/services/Sql.fs" />
     <Compile Include="src/services/ItemService.fs" />
+    <Compile Include="src/services/BlueprintService.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
