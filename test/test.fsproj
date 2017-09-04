@@ -8,8 +8,9 @@
 
   <ItemGroup>
     <Compile Include="Rand.fs" />
-    <Compile Include="Tests.fs" />
+    <Compile Include="Utils.fs" />
     <Compile Include="unit/ItemsTest.fs" />
+    <Compile Include="unit/BlueprintsTest.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
