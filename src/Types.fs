@@ -7,4 +7,5 @@ open Zrpg.Auths
 type 'a Reply =
   | Ok of 'a
   | Created of Guid
+  | NotFound of string
   | ServerError of exn
