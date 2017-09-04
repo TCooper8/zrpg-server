@@ -166,52 +166,54 @@ let internal weaponOffset = 1
 let internal armorOffset = 5
 
 let get service (id:ItemId) = async {
-  use cmd = getCmd id
-  use! conn = service.connect()
-  let! reader =
-    cmd
-    |> Sql.withConn conn
-    |> Sql.asReader
+  try
+    use cmd = getCmd id
+    use! conn = service.connect()
+    let! reader =
+      cmd
+      |> Sql.withConn conn
+      |> Sql.asReader
 
-  let! read = reader.ReadAsync() |> Async.AwaitTask
-  if not read then
-    return None
-  else
-    let fields = reader.FieldCount
+    let! read = reader.ReadAsync() |> Async.AwaitTask
+    if not read then
+      return NotFound "Item not found."
+    else
+      let fields = reader.FieldCount
 
-    let! itemType = reader.GetFieldValueAsync(0) |> Async.AwaitTask
-    match itemType with
-    | "weapon" ->
-      let! itemId = reader.GetFieldValueAsync(weaponOffset) |> Async.AwaitTask
-      let! name = reader.GetFieldValueAsync(weaponOffset + 1) |> Async.AwaitTask
-      let! description = reader.GetFieldValueAsync (weaponOffset + 2) |> Async.AwaitTask
-      let! damage = reader.GetFieldValueAsync(weaponOffset + 3) |> Async.AwaitTask
-      let weapon =
-        { name = name
-          description = description
-          damage = damage
-        }
-      return
-        Some
-          { id = itemId
-            itemType = Weapon weapon
+      let! itemType = reader.GetFieldValueAsync(0) |> Async.AwaitTask
+      match itemType with
+      | "weapon" ->
+        let! itemId = reader.GetFieldValueAsync(weaponOffset) |> Async.AwaitTask
+        let! name = reader.GetFieldValueAsync(weaponOffset + 1) |> Async.AwaitTask
+        let! description = reader.GetFieldValueAsync (weaponOffset + 2) |> Async.AwaitTask
+        let! damage = reader.GetFieldValueAsync(weaponOffset + 3) |> Async.AwaitTask
+        let weapon =
+          { name = name
+            description = description
+            damage = damage
           }
-    | "armor" ->
-      let! itemId = reader.GetFieldValueAsync(armorOffset) |> Async.AwaitTask
-      let! name = reader.GetFieldValueAsync(armorOffset + 1) |> Async.AwaitTask
-      let! description = reader.GetFieldValueAsync(armorOffset + 2) |> Async.AwaitTask
-      let! defense = reader.GetFieldValueAsync(armorOffset + 3) |> Async.AwaitTask
-      let armor:Armor =
-        { name = name
-          description = description
-          defense = defense
-        }
-      return
-        Some
-          { id = itemId
-            itemType = Armor armor
+        return
+          Ok
+            { id = itemId
+              itemType = Weapon weapon
+            }
+      | "armor" ->
+        let! itemId = reader.GetFieldValueAsync(armorOffset) |> Async.AwaitTask
+        let! name = reader.GetFieldValueAsync(armorOffset + 1) |> Async.AwaitTask
+        let! description = reader.GetFieldValueAsync(armorOffset + 2) |> Async.AwaitTask
+        let! defense = reader.GetFieldValueAsync(armorOffset + 3) |> Async.AwaitTask
+        let armor:Armor =
+          { name = name
+            description = description
+            defense = defense
           }
-    | _ ->
-      failwithf "Unhandled itemType '%s'" itemType
-      return None
+        return
+          Ok
+            { id = itemId
+              itemType = Armor armor
+            }
+      | _ ->
+        return failwithf "Unhandled itemType '%s'" itemType
+  with e ->
+    return ServerError e
 }
