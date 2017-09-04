@@ -40,6 +40,11 @@ let addArmor armor =
     return! ItemService.addArmor service armor
   })
 
+let getArmor id =
+  withService (fun service ->
+    ItemService.get service id
+  )
+
 let addWeapon weapon =
   let weapon: Weapon =
     defaultArg weapon
@@ -62,6 +67,20 @@ let ``Should setup item tables.`` () =
 let ``Should add a piece of armor.`` () = async {
   let! (IsCreated id) = addArmor None
   printfn "Created %A" id
+}
+
+[<Fact>]
+let ``Should be able to get armor that has been added.`` () = async {
+  let expected: Armor =
+    { name = Rand.nextStr 16
+      description = Rand.nextStr 64
+      defense = Rand.rand.Next 50
+    }
+
+  let! (IsCreated id) = addArmor (Some expected)
+  let! (Ok { id = id; itemType = Armor armor }) = getArmor id
+  Assert.True(compare armor expected = 0, sprintf "Expected %A but got %A" expected armor)
+  ()
 }
 
 [<Fact>]
